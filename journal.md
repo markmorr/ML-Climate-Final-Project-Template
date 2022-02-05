@@ -1,5 +1,11 @@
-Week 1-2: Read the following papers:
+Week 1-2:
 
+Wrote short script to combine the collection of datasets offered by sierra nevada mountains. 
+Having some strange data cleaning issue that's making it difficult to make even basic 
+exploratory plots. Continuing to work on fixing this to make the plots work.
+
+
+ Read the following papers:
 1. https://essd.copernicus.org/preprints/essd-2021-399/ provides ideas for features
 2. https://journals.ametsoc.org/view/journals/bams/aop/BAMS-D-20-0243.1/BAMS-D-20-0243.1.xml --crucially provides dataset
 3. https://www.pnas.org/content/117/33/19753 --good overview, background
