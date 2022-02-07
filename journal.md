@@ -4,6 +4,12 @@ Wrote short script to combine the collection of datasets offered by sierra nevad
 Having some strange data cleaning issue that's making it difficult to make even basic 
 exploratory plots. Continuing to work on fixing this to make the plots work.
 
+Week 3 ish:
+Current bug: can't open the NOAA file because it is .nc and I don't have a compatible library
+(yet) for that data type:
+Current issue: import line not working
+next to try: try conda uninstalling netCDF4 and then using pip install netcdf4?
+
 
  Read the following papers:
 1. https://essd.copernicus.org/preprints/essd-2021-399/ provides ideas for features
@@ -19,3 +25,7 @@ improves that generalizability of my analysis):
 getting it--can't just downlaod from web, need to write a python script to pull it. Currently
 working on script.
 3. this repository as well: https://github.com/alex-gottlieb/snow_drought --need to download the .yml file to access the data?
+
+
+Readings to consider doing next week:
+1. https://journals.ametsoc.org/view/journals/hydr/14/3/jhm-d-12-0119_1.xml for connection to water budgets/water security in colorado basin
