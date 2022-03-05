@@ -34,6 +34,7 @@ Readings to consider doing next week:
 #####################################################################################################
 MAJOR CHANGE
 #####################################################################################################
+
 Hi-- longer post to explain my changes. I have really been struggling to get excited 
 about my initial project idea. After lots of indecision and consideration, I've decided
 to switch to a new project idea that I am really excited about. The main idea is
