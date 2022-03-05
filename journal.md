@@ -37,7 +37,7 @@ MAJOR CHANGE
 
 Hi-- longer post to explain my changes. I have really been struggling to get excited 
 about my initial project idea. After lots of indecision and consideration, I've decided
-to switch to a new project idea that I am really excited about. The main idea is
+to switch to a somewhat different project that I am really excited about. The main idea is
 the same--predicting a hazardous weather event that is likely to be influenced by
 climate change, using historical data, and doing some extrapolation into the future
  by merging it with climate data (and future projections). I want to develop a 
@@ -50,7 +50,7 @@ I also want to do some clustering of zip codes in the US by cost of storm
 damage (included in the dataset) to produce a 'climate vulnerability' ranking system.
 The techniques I want to examine are K-Means, Spectral Clustering, and Gaussian 
 Mixtures. This ranking system could be used by actual homeowner insurance companies 
-and businesses deciding on regions to expand into.The dataset I am using is from the
+and businesses deciding on regions to expand into. The dataset I am using is from the
  NOAA Severe Storm Events Database--(see 'https://www.ncdc.noaa.gov/stormevents/'and
 'https://www.ncei.noaa.gov/pub/data/swdi/stormevents/csvfiles/'). 
 This storm events in the data are also accompanied by a narrative text description 
