@@ -8,26 +8,28 @@ Created on Fri Mar  4 15:11:42 2022
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-# import altair as alt
-
+import altair as alt
+#
 
 #recent ~10 years
-df1 = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_details-ftp_v1.0_d2021_c20220214.csv')
-df2 = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_details-ftp_v1.0_d2020_c20220214.csv')
-df3 = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_details-ftp_v1.0_d2019_c20220214.csv')
-df4 = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_details-ftp_v1.0_d2018_c20220214.csv')
-df5 = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_details-ftp_v1.0_d2017_c20220214.csv')
-df6 = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_details-ftp_v1.0_d2016_c20220214.csv')
-df7 = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_details-ftp_v1.0_d2015_c20220214.csv')
-df8 = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_details-ftp_v1.0_d2014_c20220214.csv')
-
+# =============================================================================
+# df1 = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_details-ftp_v1.0_d2021_c20220214.csv')
+# df2 = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_details-ftp_v1.0_d2020_c20220214.csv')
+# df3 = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_details-ftp_v1.0_d2019_c20220214.csv')
+# df4 = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_details-ftp_v1.0_d2018_c20220214.csv')
+# df5 = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_details-ftp_v1.0_d2017_c20220214.csv')
+# df6 = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_details-ftp_v1.0_d2016_c20220214.csv')
+# df7 = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_details-ftp_v1.0_d2015_c20220214.csv')
+# df8 = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_details-ftp_v1.0_d2014_c20220214.csv')
+# 
+# =============================================================================
 #extras
 df_loc_1 = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_locations-ftp_v1.0_d2021_c20220217.csv')
 df_loc_2 = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\2019\StormEvents_locations-ftp_v1.0_d2019_c20220214.csv')
 
 
 #just take one of the modern years
-df = df3.copy()
+df = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_details-ftp_v1.0_d2019_c20220214.csv')
 
 #old sections
 df1950 = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_details-ftp_v1.0_d1950_c20210803.csv')
@@ -44,10 +46,12 @@ for i in listy_1950:
     df_dict[i] = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_details-ftp_v1.0_d' + str(i) + '_c20210803.csv')
     
 #issues with the read in notation
-listy_2010 = [val + 2010 for val in range(12)]
-for i in listy_2010:
-    df_dict[i] = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_details-ftp_v1.0_d' + str(i) + '_c20210803.csv')
-    
+# =============================================================================
+# listy_2010 = [val + 2010 for val in range(12)]
+# for i in listy_2010:
+#     df_dict[i] = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_details-ftp_v1.0_d' + str(i) + '_c20210803.csv')
+#     
+# =============================================================================
 
 df = pd.concat([df_dict[i] for i in df_dict.keys()])
 df.columns = df.columns.str.lower()
@@ -91,8 +95,25 @@ df = pd.concat([df, one_hot], axis=1)
 
 df.drop(columns=[ 'begin_yearmonth', 'begin_day', 'event_id', 'state', 'year', 'month',
                  'years_since',], inplace=True)
+print(df.isna().sum())
+df.dropna(inplace=True)
 X = df.drop(columns=['damage_property'])
 y = df['damage_property']
+
+
+def ConvertToClassification(x):
+    if (x >= 0) and (x < 1):
+        return 'low'
+    elif x < 5:
+        return 'medium'
+    else:
+        return 'high'
+    
+df['pd'] = df['damage_property'].apply(ConvertToClassification) 
+
+df.pd.value_counts()
+df.damage_property.value_counts()
+
 
 from sklearn.model_selection import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(X,y, test_size=.3)
@@ -105,8 +126,34 @@ y_pred = regr.predict(X_test)
 from sklearn.metrics import mean_squared_error
 mean_squared_error(y_test, y_pred)
 
-np.log(2.7)
+
+from sklearn import preprocessing
+le = preprocessing.LabelEncoder()
+y = le.fit_transform(y)
+df['damage_property'] = y
+df.drop(columns=['pd'], inplace=True)
+from sklearn.manifold import TSNE
+tsne = TSNE(n_components=2, random_state=0)
+data = tsne.fit_transform(df.drop(columns='damage_property'))
+plt.scatter(data)
+
+plt.scatter(data[:,0],data[:,1],c=y)
+
+
+
+# Add title and axis names
+plt.scatter(data[:,0], data[:,1], c=y, label='Cost of damages'  )
+plt.title('t-SNE of storms')
+plt.legend(loc='upper left')
+plt.show()
+
+import seaborn as sns
+sns.scatterplot(data[:,0], data[:,1], hue=y, legend='full',)    
+
+
+
 # Layer the filled and point maps
+
 #CITE FROM GOOGLE
 # =============================================================================
 # alt.layer(costmap, pointmap).resolve_legend(
