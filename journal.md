@@ -84,3 +84,7 @@ Need to do next:
 5. Develop some better visualizations of the data for initial exploration.
 6. Fix issue with altair package install not working.
 '''
+
+2022-03-07 check in: alp
+
+Looks good. Would recommend getting some initial, even partial results, and to continue the data merging in parallel. Insights from modeling the small, potentially unremarkable data could help with the data wrangling and inspire new ideas.
