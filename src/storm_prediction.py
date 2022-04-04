@@ -9,7 +9,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import altair as alt
-#
+
 
 #recent ~10 years
 # =============================================================================
@@ -133,10 +133,8 @@ y = le.fit_transform(y)
 df['damage_property'] = y
 df.drop(columns=['pd'], inplace=True)
 from sklearn.manifold import TSNE
-tsne = TSNE(n_components=2, random_state=0)
+tsne = TSNE(n_components=2, random_state=0, learning_rate=100, init='pca', square_distances=True)
 data = tsne.fit_transform(df.drop(columns='damage_property'))
-plt.scatter(data)
-
 plt.scatter(data[:,0],data[:,1],c=y)
 
 
@@ -148,7 +146,9 @@ plt.legend(loc='upper left')
 plt.show()
 
 import seaborn as sns
-sns.scatterplot(data[:,0], data[:,1], hue=y, legend='full',)    
+sns.scatterplot(data[:,0], data[:,1], hue=y, legend='full',)   
+
+ 
 
 
 
@@ -175,10 +175,53 @@ sns.scatterplot(data[:,0], data[:,1], hue=y, legend='full',)
 
 
 
+# export GOOGLE_API_KEY=<Secret API Key>
+# export GOOGLE_CLIENT=<Secret Client>
+# export GOOGLE_CLIENT_SECRET=<Secret Client Secret>
+
+# =============================================================================
+# from urllib2 import urlopen
+# import json
+# def getplace(lat, lon):
+#     url = "http://maps.googleapis.com/maps/api/geocode/json?"
+#     url += "latlng=%s,%s&sensor=false" % (lat, lon)
+#     v = urlopen(url).read()
+#     j = json.loads(v)
+#     components = j['results'][0]['address_components']
+#     country = town = None
+#     for c in components:
+#         if "country" in c['types']:
+#             country = c['long_name']
+#         if "postal_town" in c['types']:
+#             town = c['long_name']
+#     return town, country
+# 
+# =============================================================================
+
+print(getplace(51.1, 0.1))
+print(getplace(51.2, 0.1))
+print(getplace(51.3, 0.1))
 
 
 
 
+# admin.google.com is used for Google Workspace accounts only. Regular Gmail accounts cannot be used to sign in to admin.google.com
+# https://stackoverflow.com/questions/20938728/google-developer-console-disabled
+
+df = df_loc_2.copy()
+import random
+from random import choices
+words = ['arizona', 'new mexico', 'connecticut']
+my_state_list = choices(words, k = df.shape[0])
+my_state_list = pd.Series(my_state_list)
+df['state'] = my_state_list
 
 
+from fips_code_dictionary import get_state_to_fips_dict
+mydict = get_state_to_fips_dict()
+df['state_fips_code'] = df['state'].str.upper().map(mydict)
+df.state_fips_code
+
+
+my
 

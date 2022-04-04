@@ -13,11 +13,12 @@ is the same--predicting a hazardous weather event that is likely to be influence
 and doing some extrapolation into the future by merging it with climate data (and future projections). I want
 to develop a model to predict how the severity and distribution of storms in the US in different regions will change over 
 time. 
-This would be done using an autoencoder to develop some kind of model of the dynamics between severe storms
-and climate conditions in the US ,as well as another machine learning model layered 
-on top to use the dynamics as features (right now I'm thinking more deep learning--a CNN--because of the nature of the data). 
-                                        
-I also want to do some clustering of zip codes in the US by cost of storm 
+This would be done using an autoencoder todevelop some kind of model of the dynamics between severe storms in the US 
+and climate conditions,
+as well as another machine learning model
+layered on top to use the dynamics as features (right now I'm thinking more deep learning--a CNN--because of the nature of the data). 
+                                                I also want to do some clustering of 
+                                                zip codes in the US by cost of storm 
 damage (included in the dataset) to produce a 'climate vulnerability' ranking system. The techniques I want to examine are K-Means,
 Spectral Clustering, and Gaussian Mixtures. This ranking system could be used by actual 
 homeowner insurance companies and businesses deciding on regions to expand into.
