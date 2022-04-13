@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Apr 13 17:11:38 2022
+Created on Sun Apr 10 16:55:05 2022
 
 @author: 16028
 """
+
 def genDatetimeFeatures(df):
     df['datetime'] = pd.to_datetime(df['feature_0'], format='%m-%d %X')
     min_day = dt(1900, 1, 1, 00, 00)
@@ -20,3 +21,15 @@ def runOneHot(df, feature_name):
     df = df.drop(feature_name,axis = 1)
     df = df.join(one_hot)
     return df
+
+
+
+
+
+
+
+
+
+
+
+
