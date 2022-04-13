@@ -12,18 +12,45 @@ import altair as alt
 
 
 #recent ~10 years
-# =============================================================================
-# df1 = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_details-ftp_v1.0_d2021_c20220214.csv')
-# df2 = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_details-ftp_v1.0_d2020_c20220214.csv')
-# df3 = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_details-ftp_v1.0_d2019_c20220214.csv')
-# df4 = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_details-ftp_v1.0_d2018_c20220214.csv')
-# df5 = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_details-ftp_v1.0_d2017_c20220214.csv')
-# df6 = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_details-ftp_v1.0_d2016_c20220214.csv')
-# df7 = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_details-ftp_v1.0_d2015_c20220214.csv')
-# df8 = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_details-ftp_v1.0_d2014_c20220214.csv')
-# 
-# =============================================================================
+df2019 = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_details-ftp_v1.0_d2019_c20220214.csv')
+df3 = df2019.copy()
+
+
+listy_2010 = [val + 2010 for val in range(12)]
+for i in listy_2010:
+    # df_dict[i] = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_details-ftp_v1.0_d' + str(i) + '_c20210803.csv')
+    df_dict[i] = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_details-ftp_v1.0_d' + str(i) + '_c20220217.csv')
+        
+
+df2017 = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_details-ftp_v1.0_d2017_c20220124')
+
+
+df2019 = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_details-ftp_v1.0_d2019_c20220214.csv')
+df2017 = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_details-ftp_v1.0_d2017_c20220124.csv')
+df2016 = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_details-ftp_v1.0_d2016_c20211217.csv')
+
+import glob
+
+PATH = 'C:\\Users\\16028\\Downloads\\storm_details\\'
+glob.glob(PATH)
+
+
+
+
+for f in glob.glob(PATH):
+    print(f)
+
+#difference is the 2017 vs 2014 (maybe when I downloaded?)
+df2 = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_details-ftp_v1.0_d2020_c20220214.csv')
+df2_loc = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_locations-ftp_v1.0_d2020_c20220217.csv')
+df2_det = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_details-ftp_v1.0_d2020_c20220217.csv')
 #extras
+
+df2_loc.columns = df2_loc.columns.str.lower()
+df2_det.columns = df2_det.columns.str.lower()
+
+df2_merged = pd.merge(df2_loc, df2_det, on='event_id')
+
 df_loc_1 = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_locations-ftp_v1.0_d2021_c20220217.csv')
 df_loc_2 = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\2019\StormEvents_locations-ftp_v1.0_d2019_c20220214.csv')
 
@@ -31,14 +58,6 @@ df_loc_2 = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\2019\StormEvents
 #just take one of the modern years
 df = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_details-ftp_v1.0_d2019_c20220214.csv')
 
-#old sections
-df1950 = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_details-ftp_v1.0_d1950_c20210803.csv')
-df1951 = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_details-ftp_v1.0_d1951_c20210803.csv')
-df1952 = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_details-ftp_v1.0_d1952_c20210803.csv')
-df1953 = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_details-ftp_v1.0_d1953_c20210803.csv')
-df1954 = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_details-ftp_v1.0_d1954_c20210803.csv')
-df1955 = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_details-ftp_v1.0_d1955_c20210803.csv')
-df1956 = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_details-ftp_v1.0_d1956_c20210803.csv')
 
 df_dict = dict()
 listy_1950 = [val + 1950 for val in range(11)]
@@ -46,25 +65,27 @@ for i in listy_1950:
     df_dict[i] = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_details-ftp_v1.0_d' + str(i) + '_c20210803.csv')
     
 #issues with the read in notation
-# =============================================================================
-# listy_2010 = [val + 2010 for val in range(12)]
-# for i in listy_2010:
-#     df_dict[i] = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_details-ftp_v1.0_d' + str(i) + '_c20210803.csv')
-#     
-# =============================================================================
+listy_2010 = [val + 2010 for val in range(12)]
+for i in listy_2010:
+    df_dict[i] = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_details-ftp_v1.0_d' + str(i) + '_c20210803.csv')
+    
 
 df = pd.concat([df_dict[i] for i in df_dict.keys()])
 df.columns = df.columns.str.lower()
 print(df.columns)
 
 
+df.event_type.value_counts()
 
 # df = df.sample(n=1000, random_state=1)
 df.columns
-df = df[['begin_yearmonth', 'begin_day', 'episode_id', 'event_id', 'state', 'event_type', 
+cols_to_use = ['begin_yearmonth', 'begin_day', 'episode_id', 'event_id', 'state', 'event_type', 
          'magnitude', 'category', 'tor_f_scale', 'tor_length', 'tor_width', 'begin_azimuth', 'begin_lat', 'begin_lon',
-         'damage_property']]
-df.drop(columns=['begin_azimuth', 'episode_id', 'category',], inplace=True)
+         'damage_property']
+
+cols_to_drop =['begin_azimuth', 'episode_id', 'category',]
+df = df[cols_to_use]
+df.drop(columns=cols_to_drop, inplace=True)
 
 # https://stackoverflow.com/questions/39684548/convert-the-string-2-90k-to-2900-or-5-2m-to-5200000-in-pandas-dataframe
 df.damage_property = (df.damage_property.replace(r'[KM]+$', '', regex=True).astype(float) * \
@@ -78,6 +99,8 @@ plt.hist(df['damage_property'])
 
 counts, bins = np.histogram(df.damage_property)
 plt.hist(bins[:-1], bins, weights=counts)
+plt.grid()
+plt.show()
 
 
 
@@ -209,7 +232,15 @@ print(getplace(51.3, 0.1))
 # admin.google.com is used for Google Workspace accounts only. Regular Gmail accounts cannot be used to sign in to admin.google.com
 # https://stackoverflow.com/questions/20938728/google-developer-console-disabled
 
-df = df_loc_2.copy()
+
+
+df = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_details-ftp_v1.0_d2019_c20220214.csv')
+
+df.head()
+df.columns
+df.columns = df.columns.str.lower()
+df = df[cols_to_use]
+
 import random
 from random import choices
 words = ['arizona', 'new mexico', 'connecticut']
@@ -239,7 +270,7 @@ basemap= alt.Chart(states).mark_geoshape(
 
 basemap
 
-df['damage_cost'] = y
+df['damage_cost'] = df['damage_property']
 df.columns
 
 
@@ -250,7 +281,6 @@ storm_data_state = df.copy()
 storm_data_by_state = storm_data_state.groupby(['state','state_fips_code'])['damage_cost'].sum().reset_index(name='damage_cost')
 storm_data_by_state['state_fips_code']=storm_data_by_state['state_fips_code'].str.lstrip("0")
 statemap = alt.Chart(states).mark_geoshape(  
-
 ).encode(color=alt.Color('damage_cost:Q', scale=alt.Scale(scheme='greenblue'),
                          legend=alt.Legend(title = "Total damage Cost")),
          tooltip=['state:N','damage_cost:Q']         
@@ -300,6 +330,7 @@ import altair as alt
 from vega_datasets import data
 cars = data.cars()
 
+# https://altair-viz.github.io/user_guide/display_frontends.html
 
 alt.renderers.enable('mimetype')
 
@@ -310,3 +341,24 @@ alt.Chart(cars).mark_point().encode(
 )
 
 
+
+
+df = pd.read_csv(r'C:\Users\16028\Downloads\storm_details\StormEvents_details-ftp_v1.0_d2019_c20220214.csv')
+
+df.head()
+df.columns
+df.columns = df.columns.str.lower()
+df = df[cols_to_use]
+
+
+df.damage_property = (df.damage_property.replace(r'[KMB]+$', '', regex=True).astype(float) * \
+df.damage_property.str.extract(r'[\d\.]+([KMB]+)', expand=False)
+.fillna(1).replace(['K','M', 'B'], [10**3, 10**6,10**6 ]).astype(int))
+df['damage_cost'] = df['damage_property']
+df.damage_cost.value_counts()
+df.damage_cost.hist()
+
+df['ay'] = np.log(df['damage_cost']+1)
+
+df.ay.value_counts()
+df.ay.hist()

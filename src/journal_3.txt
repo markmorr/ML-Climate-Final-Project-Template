@@ -1,0 +1,41 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Apr 13 13:37:05 2022
+
+@author: 16028
+"""
+
+Notes on some changes due to a better understanding of the data.
+The National Weather Service detect storms using instruments and visual observations
+(people literally spotting storms and calling it in). Meaning they may not capture 
+every severe storm. Additionally, events are only selected if they are rated as 
+severe enough to cause loss of life/injuries/property damage/disruption to commerice.
+
+Meaning this could also be used by commerial businesses deciding where to locate,
+especially as commercial real estate is also subject to buiding insurance costs.
+
+
+There's been a huge increase in the number of storms reported due to technology 
+and  population increases in previously sparse areas. For that reason, I might restrict 
+my analysis to areas that have had consistent density (or that didn't show a major
+increase in storm prevalence, although doing it that way might be ignoring the very
+thing that I want to identify--places where storms have increased dramatically in
+prevalence due to climate or some other factor.) Another way of doing this would
+be in comparing only the top-10 worst storms that occurred in an area, the assumption
+being that the biggest storm would always be reported, regardless of which decade
+it occurs in. I should check what the distribution of damage is--whether
+it's heavily concentrated in the top 10 or something. Q-Q Plot?
+The damage estimates are also just that--heavily guesswork--so binning will likely 
+be useful. Maybe I do something like total damage?
+
+I could also identify the top-10 hottest real estate places. and focus on those areas.
+
+Working in the housing prices will also be a large component.
+
+
+I could use a random forest baseline or something like Prophet to do the initial 
+temperature-informed analysis.
+
+Remaining quesitons to verify:
+Does storm insurance exist to any degree?
+The power would be in the branding--"climate insurance"
