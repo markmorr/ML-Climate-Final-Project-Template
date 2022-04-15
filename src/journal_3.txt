@@ -4,6 +4,28 @@ Created on Wed Apr 13 13:37:05 2022
 
 @author: 16028
 """
+Reading to do:
+# https://www.nytimes.com/live/2021/09/03/nyregion/nyc-flooding-ida?action=click&pgtype=Article&module=&state=default&region=footer&context=breakout_link_back_to_briefing#climate-change-is-making-storms-wetter-and-wilder-heres-how
+
+Some thoughts that this article lead me to want to add--things like hurricanes seem
+to dominate the damage to property (it seems like a very long-tailed distribution).
+So it might be appropriate for me to exclude the most damaging storms, or threshold
+cap them in my datasets, because I think my model will struggle to handle both scenarios.
+Hurricane/extreme event prediction is an important task but there's only several
+per year in the US. The niche that my model occupies and where it contributes usefulness
+is in more of the average, 'everyday' storms--which climate change is making 'wilder'
+and 'wetter'.
+So maybe I look for things like drift in the embeddings as well (are they getting 
+more extreme? Is this explainable just by differences in writing style across years,
+or would this be an effective proxy/complement to the damage property estimate). As
+a complmement it would be useful because the damage estimates are rough guesses,
+but also because maybe undeveloped areas might mean that powerful storms don't
+do as much damage but they would (will) once the area is more developed. Although
+maybe things like wind speed already serve to correct the damage estimate there.
+In addition: there's a lot of features I might add. In addition to that: 
+
+Maybe it should be a lot about cones of uncertainty, using the 5 UN scenarios as 
+testing data?   
 
 Notes on some changes due to a better understanding of the data.
 The National Weather Service detect storms using instruments and visual observations

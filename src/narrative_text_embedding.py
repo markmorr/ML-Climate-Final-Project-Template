@@ -21,11 +21,23 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 
 
+dftest = pd.read_csv('https://www.ncei.noaa.gov/pub/data/cirs/climdiv/climdiv-ak-tmax-inv-recent-v1.0.0-20220406', 
+                     delimiter=' ', names=['col1', 'col2', 'col3', 'col4', 'col5', 'col6'])
+
+
+dftest = pd.read_csv('https://www.ncei.noaa.gov/pub/data/cirs/climdiv/climdiv-ak-tmin-inv-recent-v1.0.0-20220406')
+dftest.head()
+
+
+dftest4 = pd.read_csv(r'C:\Users\16028\OneDrive\Documents\climate_data_ex.txt', 
+                      delim_whitespace=True,  names=['col1', 'col2', 'col3', 'col4', 'col5', 'col6'])
+
+dftest4['col1']
+dftest4
 df = df2019.copy()
 
 
-
-
+df2 = pd.read_csv(r'C:\Users\16028\Downloads\Noce-etal_2019.tab', delimiter='\t')
 
 sent_concat_train = []
 y_train = []
