@@ -11,26 +11,19 @@ import numpy as np
 
 # from netCDF4 import Dataset as NetCDFFile 
 import matplotlib.pyplot as plt
-import numpy as np
-from mpl_toolkits.basemap import Basemap
+# from mpl_toolkits.basemap import Basemap
 
 import netCDF4
-nc = netCDF4.Dataset(r'C:\Users\16028\Downloads\climatology-pr-monthly-mean_cmip6_monthly_all-regridded-bct-historical-climatology_median_1995-2014.nc','r')
-var1 = nc.variables['var1']  # access a variable in the file
-
-yg = file2read.variables['climatology-pr-monthly-mean']  # access a variable in the file
-yg 
-
+# nc = netCDF4.Dataset(r'C:\Users\16028\Downloads\climatology-pr-monthly-mean_cmip6_monthly_all-regridded-bct-historical-climatology_median_1995-2014.nc','r')
 #the net cdf is clearly 12 months x 
 
 nc = netCDF4.Dataset(r'C:\Users\16028\Downloads\climatology-tasmax-monthly-mean_cmip6_monthly_all-regridded-bct-historical-climatology_median_1995-2014.nc')
 
 print(nc.variables)
-print(ncv.keys())
 ncv = nc.variables
+print(ncv.keys())
 nc
 
-ap[0].std()
 
 a = np.zeros(5)
 
@@ -41,19 +34,31 @@ lat = np.array(lat)
 lon = nc.variables['lon'][:]
 lon = np.array(lon)
 
-ag = lat.data
-tmax = nc.variables['climatology-tasmax-monthly-mean'][:]
 
-tmax[2][3][9]
 
-if type(lat) ==  <class 'numpy.ma.core.MaskedArray'>:
+tasmax = nc.variables['climatology-tasmax-monthly-mean'][:]
+tasmax = np.array(tasmax)
+
+
+# 25 to 50 N
+# 65 W to 110 W
+
+
+tasmax_us = tasmax[:,25:50, 65:110]
+
+25*(110-65)
+
+lat_us = lat[25:50]
+lon_us = lon[65:110]
+
+tasmax[2][3][9]
+
+# if type(lat) ==  <class 'numpy.ma.core.MaskedArray'>:
 lat 
 af = np.ma.mean(lat)   
 
 nc.ncinfo()
 
-for k in nc.variables:
-     nc.variables[k].set_auto_mask(False)
 
 
 for k in ncv.keys():
@@ -88,9 +93,11 @@ for filename in res:
     df_dict[i] = x
     glued_data = pd.concat([glued_data,x],axis=0)
     
+
+# https://www.worldclim.org/data/cmip6/cmip6climate.html
     
-    
-    
+
+glued_data.columns
     
 tempo = glued_data.sample(10000)    
     
@@ -99,8 +106,7 @@ tempo
 df = tempo.copy()
 
 percent_missing = df.isnull().sum() * 100 / len(df)
-    
- res   
+   
     
     
     
@@ -115,7 +121,7 @@ import os
 import re
 res = [f for f in os.listdir(path) if re.search(r'(abc|123|a1b).*\.txt$', f)]
 res = [f for f in glob.glob(".txt") if re.match(r'[abc|123|a1b].', f)
-for f in res:
+# for f in res:
     
     
 
@@ -136,3 +142,5 @@ percent_missing = glued_data.isnull().sum() * 100 / len(df)
 df.loc[:, df.isnull().mean() < .30]    
 
     
+
+

@@ -25,7 +25,17 @@ maybe things like wind speed already serve to correct the damage estimate there.
 In addition: there's a lot of features I might add. In addition to that: 
 
 Maybe it should be a lot about cones of uncertainty, using the 5 UN scenarios as 
-testing data?   
+testing data? In addition to that, maybe I comment on (forcibly) using the 2015-
+2022 data as validation of the effectiveness of the forecast, which will help
+inform the width of the cones. And the mass of feature--I can shove that through
+an autoencoder and see how it handles it. I'll probably need a better script
+for mass-processing all the files so I don't have to do it manually.
+
+Additionally, the Earth Engine dataset might be of use late in the game for extra
+features with things like the percentage of asphalt (because that increases vulnerability)
+althought good luck to me with finding a dataset that has something like that
+feature. Maybe some kind of infrastructure development index is the best
+I'm likely to get there.
 
 Notes on some changes due to a better understanding of the data.
 The National Weather Service detect storms using instruments and visual observations
