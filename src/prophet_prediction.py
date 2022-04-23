@@ -39,21 +39,11 @@ from temp_state_dict_working import getCodeToAreaDict, getAreaToCodeDict, monthT
 from prophet_utils import correctDamageProp
 
     
-    
-    
 #bucket the damage levels
-# try various one hot encoding levels
-#rereate sum df but by year now??
-    
+
 # https://www.c2es.org/content/tornadoes-and-climate-change/ use this in powerpoint?
 
-#TODO:
-# clean up (use a lambda function) for the dc correction
-# filter by storm type
-# cap the largest storms
-# figure out how prophet takes stuff in
-# do a groupby per month and year, per state (average)
-# 
+
 # =============================================================================
 # directoryPath = r'C:\Users\16028\Downloads\storm_details\details'
 # 
@@ -71,8 +61,7 @@ from prophet_utils import correctDamageProp
 # tempo = glued_data.sample(100000) 
 # 
 # 
-# 
-# 
+
 # df1 = glued_data[:1000000]
 # 
 # df = first_tenth.copy()
@@ -112,7 +101,6 @@ from prophet_utils import correctDamageProp
 # =============================================================================
 
 
-
 def getResults(y_true, y_pred):
     print('MAE is: ' + str(mean_absolute_error(y_true,y_pred)))
 
@@ -149,7 +137,6 @@ temp = df[:1000]
 df.event_type.value_counts()
 storm_types = list(df.event_type.value_counts().keys())
 
-#want to 
 
 storm_exclusion_list = ['Drought', 'Heat', 'Excessive Heat', 'High Surf', 'Wildfire',
                         'Coastal Flood', 'Avalanche', 'Dust Devil', 'Cold/Wind Chill',
@@ -158,7 +145,6 @@ storm_exclusion_list = ['Drought', 'Heat', 'Excessive Heat', 'High Surf', 'Wildf
 df2 = df.copy()
 
 df = df[~df['event_type'].isin(storm_exclusion_list)]
-
 
 df['num_storms'] = 1
 df.columns
