@@ -1,0 +1,41 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Sat Apr 23 18:23:49 2022
+
+@author: 16028
+"""
+
+Journal update week 4/10-4/16
+
+Implemented time-dependent features to transform the problem from a time series
+classification to a time 'independent' problem. Finally completed the merge successfully
+between the precipitation dataset and the storms dataset. Note to myself--I need to alter the time windows
+because currently precipitation starts at the year 2000, which means the inner merge
+is a lot smaller. This is good right not for faster training iterations (assuming there
+isn't too much data drift) but will need to be changed soon. Decided to cap the max log cost
+(clipping values that go above to a threshold set by me) but keep the most damaging storms in the dataset.
+Want to develop a cleaner pipeline for testing parameters set along the way at various points
+(for instance, the threshold chosen was 1500. This could be tuned as well--it's a little
+silly as an example, but I think many of the pipeline choices matter here so it'd be
+interesting to be able to search effectively over the pipeline.) Random Forest accuracy not
+good--very low, like .02, on modern data (2000 on), and on log scaling. Plenty of issues
+to fix, but it runs. Georgia Ohio predicted to particularly rise in the rankings, Texas
+predicted to fall in the next immediate window.
+
+Journal update week 4/16-23
+
+Implemented a couple of the fixes suggested in class surrounding using trees on
+heavily engineerd features.
+The target encoding worked very well! Encoding the value with a random integer
+didn't make much of a difference compared to one-hot encoding (at least on this
+dataset), but ordering the integers by their associated mean target score made 
+a big difference---.05 or .06 increase in R2.
+Additionally, this is something I need to keep exploring, but I tried CatBoost 
+out of the box as as well. And it performed the best out of all my previous experiments! 
+Out of the box it gives a jump in accuracy and this is even without tuning and 
+making best use of it's handling of categorical variables.
+Also cleaned up some of the code regarding training the model/getting results
+so that I don't have to spend so much time commenting/uncommenting--I just reorganized
+some of it into simple functions.
+Also cleaned up and sped up the way I was calculating the time-related features
+because Pandas has much better functionality for doing so.

@@ -23,6 +23,10 @@ def runOneHot(df, feature_name):
     return df
 
 
+state_to_region =  {k.lower(): v for k, v in state_to_region.items()}
+df['region'] = df['state'].map(state_to_region)
+abbrev_to_us_state = dict(map(reversed, us_state_to_abbrev.items()))
+
 
 
 

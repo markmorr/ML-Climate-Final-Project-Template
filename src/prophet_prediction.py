@@ -5,25 +5,39 @@ Created on Fri Apr 15 19:28:53 2022
 @author: 16028
 """
 
-import glob
+import os
+if os.getcwd() != r'C:\Users\16028\Downloads\ML-Climate-Final-Project-Template\src':
+    os.chdir(r'C:\Users\16028\Downloads\ML-Climate-Final-Project-Template\src')
+    print(os.getcwd())
+    
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import os
 
+
+import datetime as dt
+from datetime import timedelta
+import glob
 
 from sklearn.ensemble import GradientBoostingRegressor
-from prophet import Prophet
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.ensemble import ExtraTreesRegressor
 from sklearn.metrics import mean_absolute_error
+
+from sklearn.model_selection import train_test_split
+from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_absolute_error
+from sklearn.metrics import r2_score
+
+
+from prophet import Prophet
+
 
 
 from temp_state_dict_working import getCodeToAreaDict, getAreaToCodeDict, monthToNumberDict
 from prophet_utils import correctDamageProp
 
-if os.getcwd() != r'C:\Users\16028\Downloads\ML-Climate-Final-Project-Template\src':
-    os.chdir(r'C:\Users\16028\Downloads\ML-Climate-Final-Project-Template\src')
-    print(os.getcwd())
     
     
     
@@ -245,8 +259,6 @@ reg.fit(X,y)
 
 y_pred = reg.predict(X)
 y_true = y
-
-
 mean_absolute_error(y_true, y_pred)
 
 
@@ -260,41 +272,44 @@ prec.rename(columns={'Unnamed: 0': 'state'}, inplace=True)
 years = [1980 + i for i in range(0,40)]
 months = list(prec.columns)
 months.remove("state")
-states = list(df.state) #district of columbia, alaska, hawaii
-states
+# states = list(df.state) #district of columbia, alaska, hawaii
 
+
+#creating simulated data for when needed
+# =============================================================================
 # noise = np.random.normal(value, value/100, size=13)
-my_geo_tuples = []
-for y in years:
-    for m in months:
-        for s in states:
-            value = prec[prec['state'] == s][m]#.values[0]
-            my_geo_tuples.append((y,m,s, value))
-
-
-df_sim = pd.DataFrame(data=my_geo_tuples, columns=['year', 'month', 'state', 'precipitation'])
-
-
-
-
+# my_geo_tuples = []
+# for y in years:
+#     for m in months:
+#         for s in states:
+#             value = prec[prec['state'] == s][m]#.values[0]
+#             my_geo_tuples.append((y,m,s, value))
+# 
+# 
+# df_sim = pd.DataFrame(data=my_geo_tuples, columns=['year', 'month', 'state', 'precipitation'])
+# 
+# =============================================================================
 
 
 
-from shapely.geometry import Point
-import geopandas as gpd
-from geopandas import GeoDataFrame
-
+#plotting locations
+# =============================================================================
+# from shapely.geometry import Point
+# import geopandas as gpd
+# from geopandas import GeoDataFrame
+# 
 # df = pd.read_csv("Long_Lats.csv", delimiter=',', skiprows=0, low_memory=False)
-
-df.columns
-geometry = [Point(xy) for xy in zip(df['lon'], df['lat'])]
-gdf = GeoDataFrame(df, geometry=geometry)   
-
-#this is a simple map that goes with geopandas
-world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
-gdf.plot(ax=world.plot(figsize=(10, 6)), marker='o', color='red', markersize=15);
-
-
+# 
+# df.columns
+# geometry = [Point(xy) for xy in zip(df['lon'], df['lat'])]
+# gdf = GeoDataFrame(df, geometry=geometry)   
+# 
+# #this is a simple map that goes with geopandas
+# world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
+# gdf.plot(ax=world.plot(figsize=(10, 6)), marker='o', color='red', markersize=15);
+# 
+# 
+# =============================================================================
 
 
 col_names = ['ghcn_id', 'lat', 'lon', 'stdv', 'yr_mo', 'network']
@@ -310,7 +325,7 @@ df = pd.read_csv('https://www1.ncdc.noaa.gov/pub/data/cirs/climdiv/climdiv-ak-pr
 col_names = ['id', 'jan', 'feb', 'mar', 'apr', 'may', 'jun', 'july', 'aug', 'sep',
              'oct', 'nov', 'dec']
 
-
+df_dict = {}
 address_list_dict = {'prec': 'https://www1.ncdc.noaa.gov/pub/data/cirs/climdiv/climdiv-pcpnst-v1.0.0-20220406 ',
                 'tmax': 'https://www1.ncdc.noaa.gov/pub/data/cirs/climdiv/climdiv-tmaxst-v1.0.0-20220406',
                 'tmin':'https://www1.ncdc.noaa.gov/pub/data/cirs/climdiv/climdiv-tminst-v1.0.0-20220406',
@@ -323,11 +338,7 @@ for name, address in address_list_dict.items():
                       delim_whitespace=True, names= col_names, converters={'id': lambda x: str(x)})
     
     
-    
 df_name_list = ['prec', 'tmax', 'tmin', 'avg']
-
-
-
 
 # df = pd.read_csv('https://www1.ncdc.noaa.gov/pub/data/cirs/climdiv/climdiv-pcpnst-v1.0.0-20220406',
 #                   delim_whitespace=True, names= col_names, converters={'id': lambda x: str(x)})
@@ -335,208 +346,171 @@ df_name_list = ['prec', 'tmax', 'tmin', 'avg']
 # df = df[50000:] #this will get from 1979 on essentially
 
 
-df = pd.read_csv(r'C:\Users\16028\OneDrive\Documents\prec_example.txt',
-                 delim_whitespace=True, names= col_names, converters={'id': lambda x: str(x)})
+# =============================================================================
+# df = pd.read_csv(r'C:\Users\16028\OneDrive\Documents\prec_example.txt',
+#                  delim_whitespace=True, names= col_names, converters={'id': lambda x: str(x)})
+# 
+# df.columns
+#     
+# df['state_code'] = df['id'].astype(str).str[:3]
+# df['div_number'] = df['id'].astype(str).str[3:4]
+# df['element_code'] = df['id'].astype(str).str[4:6]
+# df['year'] = df['id'].astype(str).str[6:10]
+# 
+# 
+# number_list = []
+# for i in range(1,51):
+#     number_list.append(str(i).zfill(3))
+# number_list
+#     
+# 
+# df['year'] = df['year'].astype(int)
+# df = df[df['year'] > 1970]
+# 
+# df = df[df['state_code'].isin(number_list)]
+# code_to_area_dict = getCodeToAreaDict()
+# area_to_code_dict = getAreaToCodeDict()
+# df['state'] = df['state_code'].map(code_to_area_dict)
+# names_of_month = ['id', 'jan', 'feb', 'mar', 'apr', 'may', 'jun', 'july', 'aug', 'sep',
+#              'oct', 'nov', 'dec']
+# df_temp = df[names_of_month]
+# 
+# df_temp2 = df_temp.melt(id_vars='id')
+# month_to_number = monthToNumberDict()
+# df_temp2['month'] = df_temp2['variable'].map(month_to_number)
+# 
+# #######################
+# df = df_temp2.copy()
+# 
+# df['year'] = df['id'].astype(str).str[6:10]
+# df['year'] = df['year'].astype(int)
+# df['state_code'] = df['id'].astype(str).str[:3]
+# df['state'] = df['state_code'].map(code_to_area_dict)
+# 
+# sum_df = pd.read_csv(r'sum_df_v3.csv')
+# sum_df['state'] = sum_df['state'].str.lower()
+# 
+# df_new = pd.merge(df, sum_df, on =['year', 'month', 'state'], how='inner')
+# df_new.to_csv(r'C:\Users\16028\Downloads\storm_figuring_out_stuff\df_new.csv', index=False)
+# 
+# =============================================================================
 
-    
-df['state_code'] = df['id'].astype(str).str[:3]
-df['div_number'] = df['id'].astype(str).str[3:4]
-df['element_code'] = df['id'].astype(str).str[4:6]
-df['year'] = df['id'].astype(str).str[6:10]
-
-
-number_list = []
-for i in range(1,51):
-    number_list.append(str(i).zfill(3))
-number_list
-    
-
-df['year'] = df['year'].astype(int)
-df = df[df['year'] > 1970]
-
-df = df[df['state_code'].isin(number_list)]
-code_to_area_dict = getCodeToAreaDict()
-area_to_code_dict = getAreaToCodeDict()
-
-
-
-df['state'] = df['state_code'].map(code_to_area_dict)
-
-
-col_names = ['id', 'jan', 'feb', 'mar', 'apr', 'may', 'jun', 'july', 'aug', 'sep',
-             'oct', 'nov', 'dec']
-df_temp = df[col_names]
-
-
-df_temp2 = df_temp.melt(id_vars='id')
-
-
-sum_df = pd.read_csv(r'sum_df_v3.csv')
-
-
-sum_df['state'] = sum_df['state'].str.lower()
-
-
-month_to_number = monthToNumberDict()
-df_temp2['month'] = df_temp2['variable'].map(month_to_number)
-
-#######################
-df = df_temp2.copy()
-
-df['year'] = df['id'].astype(str).str[6:10]
-df['year'] = df['year'].astype(int)
-df['state_code'] = df['id'].astype(str).str[:3]
-df['state'] = df['state_code'].map(code_to_area_dict)
-
-
-df_new = pd.merge(df, sum_df, on =['year', 'month', 'state'], how='inner')
-df_new
-
-temp = df_new[:10000]
-
-
-df_new.to_csv(r'C:\Users\16028\Downloads\storm_figuring_out_stuff.csv')
+#gnn with nodes based off region sharing, neighboring state_ness, climate region sharing?
+#some way of encoding all three numbers into one? that would be more like categorical?
+#does reinforcement learnign with gpt-3 work?
+# also we just need charts and graphs?
+#COMMAND TO JUMP TO END OF LINE
+# try the gnn with some slightly less engineered features
+# gnn compared to rnn?
+# because we're predicting in aggregate, we care less about the sequence, is there
+# a way to train for that?
+# dfdict = pd.DataFrame(columns = ['device_id'])
 
 
-alist = [i for i i]
+#closed = left ensures we don't use this month's precipitation average for our value
+#3 is the past 3 indices, it relies on perfect regularity, which seems correct at least
+# for these states and for this precipitation data
 
-def getPreviousTen(row):
-    curr_year = row['year']
-    state = row['state']
-    prev_ten = [i for i in range(row['year'] - 11, row['year'])]
-    avg_value = df[(df['state'] == state) & (df['year'].isin(prev_ten))]['value'].mean()
-    return avg_value
-    
-df['prev_ten_avg'] = df.apply(getPreviousTen)
+
+
+
+
+df = pd.read_csv(r'C:\Users\16028\Downloads\storm_figuring_out_stuff\df_new.csv')
+df['date'] = pd.to_datetime(df[['year', 'month']].assign(DAY=1)).dt.date
+df.set_index('date', inplace=True, drop=True)
+# df['moving'] = df.groupby('state')['value'].transform(lambda x: x.rolling(window=k,  closed='left').mean())
+
+feature_name_list = []
+window_lengths = [1,3,6,12,24]
+feature_list = ['prec']
+for k in window_lengths:
+    for feature_category in feature_list:
+        feature_name = 'past_' + str(k) + '_' + feature_category
+        feature_name_list.append(feature_name)
+        df[feature_name] = df.groupby('state')['value'].transform(lambda x: x.rolling(window=k,  closed='left').mean())
+
+for feature_name in feature_name_list:
+    df[feature_name] = df[feature_name].fillna(method='bfill')
+
+df.reset_index(inplace=True)
+base_date = df.date.min()
+df['days_since'] = (df['date'] - base_date).dt.days
+df['years_since'] = df['year'] - df.year.min()
+
+
+# =============================================================================
+# one_hot_cols = ['state'] #'event_type', 'tor_f_scale']
+# one_hot = pd.get_dummies(df[one_hot_cols]) 
+# df = df.drop(one_hot_cols, axis = 1)
+# df = pd.concat([df, one_hot], axis=1)
+# =============================================================================
+# =============================================================================
+# #RANDOM INTEGER ENCODING
+# df['state_encoded'] = df['state'].astype('category').cat.codes
+# =============================================================================
+###################################################################################
+# ALP'S SUGGESTION OF ENCODING BY TARGET ORDERING--HELPED A LOT, .05-.06 increase in R2
+df_state_group = df.groupby('state')
+te_dict = dict()
+for name, group in df_state_group:
+    te_dict[name] = group['log_cost'].mean()
+
+te_list_sorted = sorted(te_dict, key=te_dict.get, reverse=True)
+te_dict_ranking = {key: rank for rank, key in enumerate(te_list_sorted, 1)}
+df['state_encoded'] = df['state'].map(te_dict_ranking)
+###################################################################################
+
+
+cols_to_drop = ['state', 'id', 'variable', 'year', 'date', 'state_code', 'value']
+df = df.drop(columns=cols_to_drop)
+df.columns
 
 df.columns
-df['date'] = pd.to_datetime(df[['year', 'month']].assign(DAY=1)).dt.date
+df.drop(columns='log_cost')
+X = df.drop(columns=['log_cost', 'num_storms']).copy() #'month',
+y = df[['log_cost']].copy()
 
 
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=9)
+X_test, X_val, y_test, y_val = train_test_split(X_test, y_test, test_size =.50, random_state=9)
 
 
-
-df['last_year_average'] = df[df['year'] == ]
-
-df['new_month'] = df['value']
-
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.ensemble import GradientBoostingRegressor
-
-from sklearn.model_selection import train_test_split
-from sklearn import preprocessing
-from sklearn.model_selection import cross_val_score
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error
-from sklearn.metrics import mean_absolute_error
-from sklearn.metrics import r2_score
-
-
-
-def createOldFeatures():
-data2 = df.groupby(['year', 'state', 'month'])
+def getMetrics(y_true, y_pred, flag ):
+    print(flag + ' R2: ' + str(round(r2_score(y_true, y_pred),2)))
     
-    week_date = split_date - timedelta(days=7)
-    two_week_date = split_date - timedelta(days=14)
-    month_date = split_date - timedelta(days=30)
-    two_month_date = split_date - timedelta(days=60)
-    three_month_date = split_date - timedelta(days=90)
-    dfdict = pd.DataFrame(columns = ['device_id'])
 
-    
-    mylists = []
-    for name, group in data2:
-        if group.shape[0] < 50:
-            continue
-        date_seq = group[group['date'] < two_week_date].shape[0] #2020, 12, 1
-        percent_before_last_two_weeks = date_seq / max(group[group['date'] < split_date].shape[0],1) #dt.date(2020,12,15)
-        
-        
-        # age_seq2 = ','.join((list(group['Age'].astype(str))))
-        total_alarms = group.shape[0]
-        total_in_last_week = group[group.date > week_date].shape[0]
-        total_in_last_month = group[group.date > month_date].shape[0]
-        total_ratio_week_over_month = total_in_last_week/max(total_in_last_month,1)
-        total_30_over_90 = total_in_last_month/ max(group[group.date > three_month_date].shape[0],1)
-        ################################################################################################
-        total_in_two_weeks = group[group.date > two_week_date].shape[0]                            
-        total_in_two_months = group[group.date > two_month_date].shape[0]
-        total_two_week_over_60 = total_in_last_month/max(group[group.date > two_month_date].shape[0],1)
-        
-        moderate_in_two_weeks = group[(group.pri == '21') & (group.date > two_week_date)].shape[0]                            
-        moderate_in_two_months = group[(group.pri == '21') & (group.date > two_month_date)].shape[0]   
-        moderate_two_week_over_60 = moderate_in_two_weeks/max(moderate_in_two_months,1)
-        
-        
-        one_over_11_in_two_weeks = group[(group.priority == '1') & (group.date > two_week_date)].shape[0]/max(group[(group.priority == '11') & (group.date > week_date)].shape[0],1)
-        one_over_11_in_two_months = group[(group.priority == '1') & (group.date > two_month_date)].shape[0]/max(group[(group.priority == '11') & (group.date > week_date)].shape[0],1)
-        one_over_11_two_week_over_60 = one_over_11_in_two_weeks/max(one_over_11_in_two_months,1)
-        
-        
-        eighty_seven_total = group[group.priority == '87'].shape[0]
-        eighty_seven_in_last_week = group[(group.priority == '87') & (group.date > week_date)].shape[0]
-        eighty_seven_total_in_last_month = group[(group.priority == '87') & (group.date > month_date)].shape[0]
-        eighty_eight_total = group[group.priority == '88'].shape[0]
-        eighty_eight_in_last_week = group[(group.priority == '88') & (group.date > week_date)].shape[0]
-        eighty_eight_in_last_month = group[(group.priority == '88') & (group.date > month_date)].shape[0]
-        eight_seven_over_eighty_eight_total = eighty_seven_total/max(eighty_eight_total,1)
-        eight_seven_over_eighty_eight_in_last_week = eighty_seven_in_last_week/max(eighty_eight_in_last_week,1)
-        
-        DMXPLR = group[group.DMXPLR == 1].shape[0]/total_alarms
-        DMXTEND = group[group.DMXTEND == 1].shape[0]/total_alarms
-        DMXTND = group[group.DMXTND == 1].shape[0]/total_alarms
-        # MPR = group[group.MPR == 1].shape[0]/total_alarms
-        TSS5 = group[group.TSS5 == 1].shape[0]/total_alarms
-        WDMX = group[group.WDMX == 1].shape[0]/total_alarms
-        DMX = group[group.DMX == 1].shape[0]/total_alarms
-        DMX_like = (total_alarms - WDMX)/total_alarms
-        
-        ################################################################################################
-        
-        moderate_total = group[group.pri == '21'].shape[0]
-        moderate_in_last_week = group[(group.pri == '21') & (group.date > week_date)].shape[0]
-        moderate_in_last_month = group[(group.pri == '21') & (group.date > month_date)].shape[0]
-        moderate_ratio_week_over_month = moderate_in_last_week / max(moderate_in_last_month, 1)
-        moderate_over_total = moderate_total/max(total_alarms,1)
-        moderate_over_total_in_last_week = moderate_in_last_week/max(total_in_last_week,1)
-        moderate_30_over_90 = moderate_in_last_month/ max(group[(group.pri == '1') & (group.date > three_month_date)].shape[0],1)
-        
-        
-        critical_total = group[group.pri == '1'].shape[0]
-        critical_in_last_week = group[(group.pri == '1') & (group.date > week_date)].shape[0]
-        critical_in_last_month = group[(group.pri == '1') & (group.date > month_date)].shape[0]
-        critical_ratio_week_over_month = critical_in_last_week / max(critical_in_last_month, 1)
-        critical_over_total = critical_total/max(total_alarms,1)
-        critical_over_moderate = critical_total/max(moderate_total,1)
-        critical_over_total_in_last_week = critical_in_last_week/max(total_in_last_week,1)
-        critical_30_over_90 = critical_in_last_month/ max(group[(group.pri == '1') & (group.date > three_month_date)].shape[0],1)
-        
-        one_over_11_total = group[group.priority == '1'].shape[0]/max(group[group.priority == '11'].shape[0],1)
-        one_over_11_in_last_week = group[(group.priority == '1') & (group.date > week_date)].shape[0]/max(group[(group.priority == '11') & (group.date > week_date)].shape[0],1)
-        one_over_11_in_last_month = group[(group.priority == '1') & (group.date > week_date)].shape[0]/max(group[(group.priority == '11') & (group.date > month_date)].shape[0],1)
-        one_over_11_ratio_week_over_month = one_over_11_in_last_week/max(one_over_11_in_last_month,1)
-        
-        #shoul
-        a1 = group[group.a1 == 1].shape[0]
-        a2 = group[group.a2 == 1].shape[0]
-        a3 = group[group.a3 == 1].shape[0]
-        a4 = group[group.a4 == 1].shape[0]
-        a5 = group[group.a5 == 1].shape[0]
-        a6 = group[group.a6 == 1].shape[0]
-        a7 = group[group.a7 == 1].shape[0]
-        a_none = group[group['None'] == 1].shape[0]
-        
-# =============================================================================
-#         a8 = group[group.a8 == 1].shape[0]
-#         a9 = group[group.a9 == 1].shape[0]
-#         a10 = group[group.a10 == 1].shape[0]
-#         a11 = group[group.a11 == 1].shape[0]
-#         a12 = group[group.a12 == 1].shape[0]
-#         
-# =============================================================================
-        
-        a1_in_past_week = group[(group.a1 == 1) & (group.date > week_date)].shape[0]
-        a2_in_past_week = group[(group.a2 == 1) & (group.date > week_date)].shape[0]
-        a3_in_past_week = group[(group.a3 == 1) & (group.date > week_date)].shape[0]
-        
-        return
+def runModel(reg, X_train, y_train, X_test, y_test):
+    print(reg.__class__.__name__ + '\n\n\n')
+    reg.fit(X_train, y_train)
+    y_pred = reg.predict(X_train)
+    getMetrics(y_train, y_pred, 'Training')
+    y_pred = reg.predict(X_test)
+    getMetrics(y_test, y_pred, 'Testing')
+    return
+
+
+
+# reg = RandomForestRegressor(max_depth=35)
+# reg = ExtraTreesRegressor(max_depth=30, min_samples_split=3)
+
+reg_list = [RandomForestRegressor(max_depth=35), ExtraTreesRegressor(max_depth=30, min_samples_split=3),
+            GradientBoostingRegressor()]
+for reg in reg_list:    
+    runModel(reg, X_train, y_train, X_test, y_test)  
+
+
+
+
+from catboost import CatBoostRegressor, Pool
+
+model = CatBoostRegressor(random_seed=9,
+                          loss_function='RMSE',
+                          logging_level='Info')
+model.fit(X_train, y_train)
+# Get predictions
+
+y_pred = model.predict(X_test)
+y_pred_train = model.predict(X_train)
+getMetrics(y_train, y_pred_train, "Training")
+getMetrics(y_test, y_pred, "Testing")
+runModel(model, X_train, y_train, X_test, y_test)
