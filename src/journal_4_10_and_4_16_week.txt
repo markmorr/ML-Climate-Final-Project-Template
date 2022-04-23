@@ -7,6 +7,8 @@ Created on Sat Apr 23 18:23:49 2022
 
 Journal update week 4/10-4/16
 
+Attempted to run Facebook Prophet GAM implementation--it did not get remotely good accuracy.
+This helped motivate a shift in how I thought about the problem--towards converting it to a standard regression.
 Implemented time-dependent features to transform the problem from a time series
 classification to a time 'independent' problem. Finally completed the merge successfully
 between the precipitation dataset and the storms dataset. Note to myself--I need to alter the time windows
@@ -38,4 +40,6 @@ Also cleaned up some of the code regarding training the model/getting results
 so that I don't have to spend so much time commenting/uncommenting--I just reorganized
 some of it into simple functions.
 Also cleaned up and sped up the way I was calculating the time-related features
-because Pandas has much better functionality for doing so.
+because Pandas has much better functionality for doing so. TODO: need to clean the code some more.
+Propet_Prediction is becoming too unwieldy. Also, probably need a better name given
+that Prophet failed so spectacularly.
