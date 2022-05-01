@@ -37,9 +37,13 @@ from prophet import Prophet
 
 from temp_state_dict_working import getCodeToAreaDict, getAreaToCodeDict, monthToNumberDict
 from prophet_utils import correctDamageProp
+from state_to_neighbor_dict import get_state_border_dict
 
-    
-#bucket the damage levels
+# TODOs  
+# bucket the damage levels
+# change it to two largest nearby states neighbors?
+# setup sklearn custom pipeline to perform a search over different state neighbor dictionaries
+# okay so the date sorting is screwed up
 
 # https://www.c2es.org/content/tornadoes-and-climate-change/ use this in powerpoint?
 
@@ -401,13 +405,189 @@ df_name_list = ['prec', 'tmax', 'tmin', 'avg']
 
 
 
+
+# runModel(model, X_train, y_train, X_test, y_test)
+# Get predictions
+
+# model.fit(X_train, y_train)
+# y_pred = model.predict(X_test)
+# y_pred_train = model.predict(X_train)
+# getMetrics(y_train, y_pred_train, "Training")
+# getMetrics(y_test, y_pred, "Testing")
+
+
+########################################################################################
+#######################################################################################
+### check whether catboost performs just as well leaving state as categorical (maybe it does
+# that stuff internally?)
+
+#insert the backfill before I feed it into the dictionary?
+# clean this code up
+
+#insert the backfill in the rolling_feature_dict for loop?
+# start passing in feature_tuple_list as a parameter to ensure uniformity 
+# ensure that I'm testing on temporally future data 
+#(do a time series rolling split? figure out how to do that?)
+        
+# in order to not deal with missing features(i.e. uniform length), need to get average of neighbors?
+# past 24_prec seems to be having some issues?
+# add past_36 and maybe even past_48 ?
+# try passing in raw stuff to an MLP
+# split final report into sections: stuff that worked, stuff that did not work but was
+# still interesting, and stuff that did not work but I included to show the process I took
+# to get here
+# post on 4771 edstem?
+
+
+
+
+def getRollingFeatures(df_input, feature_tuple_list, feature_name_list):
+    df_input['date'] = pd.to_datetime(df_input[['year', 'month']].assign(DAY=1)).dt.date
+    df_input.sort_values(by=['state', 'date'], inplace=True)
+    df_input.set_index('date', inplace=True, drop=True)
+    # df_input['moving'] = df_input.groupby('state')['value'].transform(lambda x: x.rolling(window=k,  closed='left').mean())
+    
+    # feature_name_list = []
+    # window_lengths = [1,3,6,12,24]
+    # feature_list = ['prec']
+    for feat_tuple, feat_name, in zip(feature_tuple_list, feature_name_list):
+        # feature_name = 'past_' + str(k) + '_' + feature_category
+        # feature_name_list.append(feature_name)
+        # feature_name_list.append(feat)
+        # SOON VALUE WILL HAVE TO BE REPLACED BY THE CHARACTERISTIC FEATURE
+        k = feat_tuple[1]
+        print(k)
+        print(feat_name)
+        df_input[feat_name] = df_input.groupby('state')['value'].transform(lambda x: x.rolling(window=k,  closed='left').mean())
+
+    # df_input.groupby('state')['value'].transform(lambda x: x.rolling(window=k,  closed='left').mean())
+    
+    for feature_name in feature_name_list:
+        df_input[feature_name] = df_input[feature_name].fillna(method='bfill')
+    
+    df_input.reset_index(inplace=True)
+    base_date = df_input.date.min()
+    return df_input
+
+window_lengths = [1,3,6,12,24]
+feature_list = ['prec']
+feature_name_list = []
+feature_tuple_list = []
+for feat_name in feature_list:
+    for period in window_lengths:
+        feature_tuple_list.append((feat_name, period))
+        feature_name_list.append( feat_name + '_' + str(period))
+
+
+df_to_use = pd.read_csv(r'C:\Users\16028\Downloads\storm_figuring_out_stuff\df_new.csv')
+getRollingFeatures(df_to_use, feature_tuple_list, feature_name_list)
+
+
+#####################################################################################
+
+df = pd.read_csv(r'C:\Users\16028\Downloads\storm_figuring_out_stuff\df_new.csv')
+df['date'] = pd.to_datetime(df[['year', 'month']].assign(DAY=1)).dt.date
+df.sort_values(by=['state', 'date'], inplace=True)
+df.set_index('date', inplace=True, drop=True)
+state_list = list(df['state'].unique())
+
+
+state_to_neighbor_dict = get_state_border_dict()
+# remove keys that aren't included
+# iterate through the state and it's neighbor list--> if a state in the neighbor list
+# is unlisted, then remove that one from the list (but keep the rest of course)     
+remove = [k for k in state_to_neighbor_dict if k not in state_list]
+for k in remove: 
+    del state_to_neighbor_dict[k]
+for k,v in state_to_neighbor_dict.items():
+    if k not in state_list:        
+        print(k)
+    for state_name in v:
+        if state_name not in state_list:
+            v.remove(state_name) 
+        if state_name == k:
+            v.remove(state_name)
+            
+df['state_neighbors'] = df['state'].map(state_to_neighbor_dict)
+
+
+df
+rolling_feature_dict = dict()
+k_list = [1,3,6,12,24]
+feature_category = 'prec'
+for state in state_list:
+    for k in k_list:
+        rolling_feature_dict['prec_' + state + '_' + str(k)] = df[df['state'] == state]['value'].transform(lambda x: x.rolling(window=k,  closed='left').mean())
+
+
+feature_tuple_list
+feature_name_list
+rolling_feature_dict = dict()
+for state in state_list:
+    for feat_tuple, feat_name in zip(feature_tuple_list, feature_name_list):
+        print(feat_tuple)
+        k = feat_tuple[1]
+        rolling_feature_dict[feat_name + '_' + state] = df[df['state'] == state]['value'].transform(lambda x: x.rolling(window=k,  closed='left').mean())
+
+df.reset_index(inplace=True)
+
+
+def getNeighboringFeatures(row, k):
+    n_neighbors = len(row['state_neighbors'])
+    date = row['date']
+    contribution = 0
+    for neighbor in row['state_neighbors']:
+
+        neighbor_series = rolling_feature_dict['prec_' + str(k) + '_' + neighbor]
+            # print(neighbor_series)
+        if date in neighbor_series.index:
+            contribution += neighbor_series[date]
+        else:
+            n_neighbors -= 1
+    if n_neighbors <= 0:
+        return 0
+    else:
+        return contribution/n_neighbors
+    
+added_feature_list = []
+for k in [1,3,6,12,24]:
+    feature_name = 'neighbor_prec_' + str(k)
+    added_feature_list.append(feature_name)
+    df[feature_name] = df.apply(getNeighboringFeatures, args =(k,), axis=1)
+    df[feature_name] = df[feature_name].fillna(method='bfill')
+
+    
+added_feature_list = []
+for feat_tuple, feat_name in zip(feature_name_list, feature_tuple_list):
+    feature_name = 'neighbor_prec_' + str(k)
+    added_feature_list.append(feat_name)
+    df[feature_name] = df.apply(getNeighboringFeatures, args =(k,), axis=1)
+    df[feature_name] = df[feature_name].fillna(method='bfill')
+
+feature_name_list
+
+# in a way the yearly precipitation is probably useful as well
+# try it without the engineered features, just datetime, to see how it does?
+df.isna().sum()
+
+df_to_use
+df_with_neighbors = df.copy()
+# df_new = pd.merge(df_to_use, df, on =['year', 'month', 'state'], how='inner')
+
+
+
+
+
 df = pd.read_csv(r'C:\Users\16028\Downloads\storm_figuring_out_stuff\df_new.csv')
 df['date'] = pd.to_datetime(df[['year', 'month']].assign(DAY=1)).dt.date
 df.set_index('date', inplace=True, drop=True)
 # df['moving'] = df.groupby('state')['value'].transform(lambda x: x.rolling(window=k,  closed='left').mean())
 
+
+### this is the feature engineering for the state's own variables
+ 
 feature_name_list = []
-window_lengths = [1,3,6,12,24]
+window_lengths = [1,3,6,12,24] #***
 feature_list = ['prec']
 for k in window_lengths:
     for feature_category in feature_list:
@@ -423,18 +603,13 @@ base_date = df.date.min()
 df['days_since'] = (df['date'] - base_date).dt.days
 df['years_since'] = df['year'] - df.year.min()
 
-
-# =============================================================================
-# one_hot_cols = ['state'] #'event_type', 'tor_f_scale']
-# one_hot = pd.get_dummies(df[one_hot_cols]) 
-# df = df.drop(one_hot_cols, axis = 1)
-# df = pd.concat([df, one_hot], axis=1)
-# =============================================================================
 # =============================================================================
 # #RANDOM INTEGER ENCODING
 # df['state_encoded'] = df['state'].astype('category').cat.codes
 # =============================================================================
-###################################################################################
+# =============================================================================
+# TARGET ENCODING
+# =============================================================================
 # ALP'S SUGGESTION OF ENCODING BY TARGET ORDERING--HELPED A LOT, .05-.06 increase in R2
 df_state_group = df.groupby('state')
 te_dict = dict()
@@ -444,14 +619,14 @@ for name, group in df_state_group:
 te_list_sorted = sorted(te_dict, key=te_dict.get, reverse=True)
 te_dict_ranking = {key: rank for rank, key in enumerate(te_list_sorted, 1)}
 df['state_encoded'] = df['state'].map(te_dict_ranking)
-###################################################################################
+# =============================================================================
+key_columns = ['year', 'month', 'state']
 
+df = pd.merge(df, df_with_neighbors[['year', 'month', 'state'] + added_feature_list], on=key_columns, how='inner')
 
 cols_to_drop = ['state', 'id', 'variable', 'year', 'date', 'state_code', 'value']
 df = df.drop(columns=cols_to_drop)
-df.columns
 
-df.columns
 df.drop(columns='log_cost')
 X = df.drop(columns=['log_cost', 'num_storms']).copy() #'month',
 y = df[['log_cost']].copy()
@@ -466,37 +641,41 @@ def getMetrics(y_true, y_pred, flag ):
     
 
 def runModel(reg, X_train, y_train, X_test, y_test):
-    print(reg.__class__.__name__ + '\n\n\n')
+    print(reg.__class__.__name__)
     reg.fit(X_train, y_train)
     y_pred = reg.predict(X_train)
     getMetrics(y_train, y_pred, 'Training')
     y_pred = reg.predict(X_test)
     getMetrics(y_test, y_pred, 'Testing')
+    print('\n\n\n')
     return
-
-
-
-# reg = RandomForestRegressor(max_depth=35)
-# reg = ExtraTreesRegressor(max_depth=30, min_samples_split=3)
-
-reg_list = [RandomForestRegressor(max_depth=35), ExtraTreesRegressor(max_depth=30, min_samples_split=3),
-            GradientBoostingRegressor()]
-for reg in reg_list:    
-    runModel(reg, X_train, y_train, X_test, y_test)  
-
-
 
 
 from catboost import CatBoostRegressor, Pool
 
+reg_list = [RandomForestRegressor(max_depth=35), ExtraTreesRegressor(max_depth=30, min_samples_split=3),
+            GradientBoostingRegressor(),
+            CatBoostRegressor(random_seed=9, loss_function='RMSE',logging_level='Silent')]
+for reg in reg_list:    
+    runModel(reg, X_train, y_train, X_test, y_test)  
+
+
 model = CatBoostRegressor(random_seed=9,
                           loss_function='RMSE',
-                          logging_level='Info')
-model.fit(X_train, y_train)
-# Get predictions
+                          logging_level='Silent')
 
-y_pred = model.predict(X_test)
-y_pred_train = model.predict(X_train)
-getMetrics(y_train, y_pred_train, "Training")
-getMetrics(y_test, y_pred, "Testing")
-runModel(model, X_train, y_train, X_test, y_test)
+
+
+# build up the code
+# # then move on to climate forward 
+# then expand the feature set
+# # binning/discretizing response storm amounts
+# # then go lower level to zip code
+# # # then connect it to housing prices
+# might need to do some work to ensure the neighboring variables always match with
+# the state's own features, but that may not be the case--> maybe just rearrange code
+
+# fix the index reset issue
+# pass in feature list as a parameter
+# get df.apply (args = (,)) to work
+
