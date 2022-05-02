@@ -81,21 +81,47 @@ nc = netCDF4.Dataset(r'C:\Users\16028\Downloads\copernicus_precipitation\precipi
 
 
 print(file2read.variables.keys())
+print(nc.variables.keys())
 
+file2read['pr']
 df_dict = dict()
-for var_name in file2read.variables.keys():
+for var_name in nc.variables.keys():
     df_dict[var_name] = nc[var_name][:].data
     
-time_prec = nc['time_bnds'][:]
-
+time_prec = nc['pr'][:].data
+time_prec.shape
+37*57
 
 my_new_array = time_prec.data
 
-df = pd.DataFrame(my_new_array, columns=['t1', 't2'])
+lat_array_cop = nc['lat'][:].data
+lon_array_cop = nc['lon'][:].data
+df_lat = pd.DataFrame(nc['lat'][:].data ,columns=['lat'])
+df_lon = pd.DataFrame(nc['lon'][:].data, columns=['lon'])
+
+new_array = lat_array_cop
+
+arr1 = np.array([1,2])
+arr2 = np.array([3,4,5])
+arr3 = np.array(arr1, arr2)
+lat_array_cop
+output_arr = np.zeros((lat_array_cop.shape[0], lon_array_cop.shape[0]))
+for x in lat_array_cop:
+    for y in lon_array_cop:
+        output_arr[i,j] = [x,y]
+        
+df_lat_bns = pd.DataFrame(nc['lat_bnds'][:].data, columns=['lat_bnds1', 'lat_bnds2'])
+df_lon_bns = pd.DataFrame(nc['lon_bnds'][:].data, columns=['lon_bnds1', 'lon_bnds2'])
+
+df8= pd.DataFrame(nc['lat'][:], columns=['lat'])
+
+df8= pd.DataFrame(my_new_array, columns=['t1', 't2'])
 748250/365
 import numpy as np
 import numpy.ma as ma
 
+df_lon*(-1) + 180
+df_lon_bns
 
 df['t1'] = df['t1'] /365
 df['t2'] = df['t2'] /365
@@ -129,6 +155,8 @@ fig.show()
 import geopandas as gpd
 
 shapefile = gpd.read_file(r"C:\Users\16028\Downloads\CONUS_CLIMATE_DIVISIONS.shp\GIS.OFFICIAL_CLIM_DIVISIONS.shp")
+gdf = gpd.read_file(r"C:\Users\16028\Downloads\CONUS_CLIMATE_DIVISIONS.shp\GIS.OFFICIAL_CLIM_DIVISIONS.shp")
+
 print(shapefile)
 shapefile
 shapefile.head()
@@ -139,7 +167,23 @@ shapefile.columns
 shapefile['NAME'].value_counts()
 shapefile.value_counts()
 
-DF = 
+
+af = shapefile.geometry.centroid
+# DF = 
+#compute the difference in accuracy using the CMIP6 on 2014 data vs. the actual on 
+# 2014 data?
 
 from shapely.geometry import Point, Polygon
 shapefile['ST_ABBRV'].value_counts()
+
+
+fig, ax = plt.subplots(figsize = (15,15))
+af.plot(ax=ax)
+
+af.plot()
+#
+gdf["x"] = gdf.centroid.x
+gdf["y"] = gdf.centroid.y
+gdf["x"]
+gdf["centroids"] = gdf.centroid
+gdf["centroids"]

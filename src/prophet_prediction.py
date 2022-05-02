@@ -439,6 +439,8 @@ df_name_list = ['prec', 'tmax', 'tmin', 'avg']
 
 
 
+
+
 def getRollingFeatures(df_input, feature_tuple_list, feature_name_list):
     df_input['date'] = pd.to_datetime(df_input[['year', 'month']].assign(DAY=1)).dt.date
     df_input.sort_values(by=['state', 'date'], inplace=True)
