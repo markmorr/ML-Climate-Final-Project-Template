@@ -8,7 +8,7 @@ Created on Sat Apr 23 15:55:04 2022
 import pandas as pd
 
 
-col_names = ['ghcn_id', 'lat', 'lon', 'stdv', 'yr_mo', 'network']
+# col_names = ['ghcn_id', 'lat', 'lon', 'stdv', 'yr_mo', 'network']
 base_url = 'https://www1.ncdc.noaa.gov/pub/data/cirs/climdiv/'
 
 new_address_dict = { 
@@ -33,6 +33,11 @@ new_address_dict = {
 
 print(new_address_dict['zndx'])
 
+
+
+col_names = ['id', 'jan', 'feb', 'mar', 'apr', 'may', 'jun', 'july', 'aug', 'sep',
+             'oct', 'nov', 'dec']
+
 new_df_dict = {}
 myguy = 'https://www1.ncdc.noaa.gov/pub/data/cirs/climdiv/climdiv-tmpcst-v1.0.0-20220406'
 new_df_dict['tmpc'] = pd.read_csv(myguy, delim_whitespace=True, names= col_names, converters={'id': lambda x: str(x)})
@@ -40,11 +45,13 @@ new_df_dict['tmpc'] = pd.read_csv(myguy, delim_whitespace=True, names= col_names
 for name, address in new_address_dict.items():
     print(name)
     print(address)
-    new_df_dict[name] = pd.read_csv(base_url + address, delim_whitespace=True, names= col_names, converters={'id': lambda x: str(x)})
+    new_df_dict[name] = pd.read_csv(base_url + address, delim_whitespace=True, 
+                                    names= col_names, converters={'id': lambda x: str(x)})
     
 
 for name, dfy in new_df_dict.items():
-    dfy.to_csv(r'C:\Users\16028\Downloads\storm_figuring_out_stuff\raw_' + name + '.csv')
+    dfy.to_csv(r'C:\Users\16028\Downloads\storm_figuring_out_stuff\local_noaa\raw_' + name + '.csv',
+               index=False)
     
 # =============================================================================
 # for name, addresss in new_address_dict.items():

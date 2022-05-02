@@ -305,10 +305,8 @@ months.remove("state")
 col_names = ['ghcn_id', 'lat', 'lon', 'stdv', 'yr_mo', 'network']
 
 df = pd.read_csv('https://www1.ncdc.noaa.gov/pub/data/cirs/climdiv/climdiv-ak-prcp-inv-v1.0.0-20220406',
-                 delim_whitespace=True, names= col_names)
+                  delim_whitespace=True, names= col_names)
 
-df = pd.read_csv('https://www1.ncdc.noaa.gov/pub/data/cirs/climdiv/climdiv-ak-prcp-inv-v1.0.0-20220406',
-                 delim_whitespace=True, names= col_names)
 
 
 
@@ -564,17 +562,14 @@ for feat_tuple, feat_name in zip(feature_name_list, feature_tuple_list):
     df[feature_name] = df.apply(getNeighboringFeatures, args =(k,), axis=1)
     df[feature_name] = df[feature_name].fillna(method='bfill')
 
-feature_name_list
-
 # in a way the yearly precipitation is probably useful as well
 # try it without the engineered features, just datetime, to see how it does?
-df.isna().sum()
-
-df_to_use
 df_with_neighbors = df.copy()
 # df_new = pd.merge(df_to_use, df, on =['year', 'month', 'state'], how='inner')
 
 
+###############################################################################
+###############################################################################
 
 
 
@@ -586,9 +581,9 @@ df.set_index('date', inplace=True, drop=True)
 
 ### this is the feature engineering for the state's own variables
  
-feature_name_list = []
 window_lengths = [1,3,6,12,24] #***
 feature_list = ['prec']
+feature_name_list = []
 for k in window_lengths:
     for feature_category in feature_list:
         feature_name = 'past_' + str(k) + '_' + feature_category
@@ -608,8 +603,8 @@ df['years_since'] = df['year'] - df.year.min()
 # df['state_encoded'] = df['state'].astype('category').cat.codes
 # =============================================================================
 # =============================================================================
+###############################################################################
 # TARGET ENCODING
-# =============================================================================
 # ALP'S SUGGESTION OF ENCODING BY TARGET ORDERING--HELPED A LOT, .05-.06 increase in R2
 df_state_group = df.groupby('state')
 te_dict = dict()
@@ -620,13 +615,13 @@ te_list_sorted = sorted(te_dict, key=te_dict.get, reverse=True)
 te_dict_ranking = {key: rank for rank, key in enumerate(te_list_sorted, 1)}
 df['state_encoded'] = df['state'].map(te_dict_ranking)
 # =============================================================================
+###############################################################################
 key_columns = ['year', 'month', 'state']
-
 df = pd.merge(df, df_with_neighbors[['year', 'month', 'state'] + added_feature_list], on=key_columns, how='inner')
+
 
 cols_to_drop = ['state', 'id', 'variable', 'year', 'date', 'state_code', 'value']
 df = df.drop(columns=cols_to_drop)
-
 df.drop(columns='log_cost')
 X = df.drop(columns=['log_cost', 'num_storms']).copy() #'month',
 y = df[['log_cost']].copy()
@@ -652,6 +647,10 @@ def runModel(reg, X_train, y_train, X_test, y_test):
 
 
 from catboost import CatBoostRegressor, Pool
+model = CatBoostRegressor(random_seed=9,
+                          loss_function='RMSE',
+                          logging_level='Silent')
+
 
 reg_list = [RandomForestRegressor(max_depth=35), ExtraTreesRegressor(max_depth=30, min_samples_split=3),
             GradientBoostingRegressor(),
@@ -659,10 +658,6 @@ reg_list = [RandomForestRegressor(max_depth=35), ExtraTreesRegressor(max_depth=3
 for reg in reg_list:    
     runModel(reg, X_train, y_train, X_test, y_test)  
 
-
-model = CatBoostRegressor(random_seed=9,
-                          loss_function='RMSE',
-                          logging_level='Silent')
 
 
 
@@ -678,4 +673,47 @@ model = CatBoostRegressor(random_seed=9,
 # fix the index reset issue
 # pass in feature list as a parameter
 # get df.apply (args = (,)) to work
+
+
+
+
+col_names = ['id', 'jan', 'feb', 'mar', 'apr', 'may', 'jun', 'july', 'aug', 'sep',
+             'oct', 'nov', 'dec']
+
+df_dict = {}
+address_list_dict = {'prec': 'https://www1.ncdc.noaa.gov/pub/data/cirs/climdiv/climdiv-pcpnst-v1.0.0-20220406 ',
+                'tmax': 'https://www1.ncdc.noaa.gov/pub/data/cirs/climdiv/climdiv-tmaxst-v1.0.0-20220406',
+                'tmin':'https://www1.ncdc.noaa.gov/pub/data/cirs/climdiv/climdiv-tminst-v1.0.0-20220406',
+                'avg':'https://www1.ncdc.noaa.gov/pub/data/cirs/climdiv/climdiv-tmpcst-v1.0.0-20220406',
+                }
+
+
+for name, address in address_list_dict.items():
+    df_dict[name] = pd.read_csv(address,
+                      delim_whitespace=True, names= col_names, converters={'id': lambda x: str(x)})
+    
+    
+
+df_dict = dict()
+directory_path = r"C:/Users/16028/Downloads/storm_figuring_out_stuff/local_noaa"
+res = [f for f in glob.glob( directory_path + r"/" +'*.csv')]# or "123" in f or "a1b" in f]
+feature_category_list = ['prec', 'tmin', 'tmpc', 'tmax']
+# ' \ ' and ' / ' are interchangeable in python paths
+for filename in res:
+
+    print(filename)
+    file_id = filename.split('raw_')[1]
+    file_id = file_id.split('.csv')[0]
+    print()
+    print(file_id)
+    if file_id in feature_category_list:
+        x = pd.read_csv(filename, converters={'id': lambda x: str(x)}) # delim_whitespace=True,
+        x.reset_index(drop=True)
+        df_dict[file_id] = x
+
+
+
+df_dict.keys()
+df_dict['tmpc']
+#
 

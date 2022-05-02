@@ -1,0 +1,25 @@
+Week 14.5 Update:
+    
+Spent a lot of time re-working the code this week to make it more sustainable/turn it from
+a jumbled mess into something that it would be quicker to iterate over. As it stood, it had
+gotten difficult to continue building off. Too many data sources etc. Still more work
+to be done there but it feels a lot better. I improved the neighboring states feature extraction
+so that it truly works--there were a lot of issues before I believe. Started working with a housing
+dataset of the right resolution that I want (from Redfin). Started trying to use a GNN to better 
+accommodate the different spatial relationships rather than just using something clumsy like borders,
+but I still need to clarify what exactly I'm going to define the graph over.
+
+Things left to do:
+    The experiment tracker code still doesn't work how I want it to do. Meant to be used
+    so that I don't waste time re-running experiments with certain feature subsets' or hyperparameters
+    and so I have an automated log of everything to help build intution of what's working.
+    
+    Work on the extension to climate forward data so it's not so simulated/more realistic
+    Try to get the GNN to work
+    
+    Refine the code and try to find the balance between including all features (collinearity)
+    and only using one.
+    
+    Intergrate my results with housing data
+    
+    Attempt to lower the resolution down to zip code

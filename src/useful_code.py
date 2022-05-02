@@ -30,6 +30,16 @@ abbrev_to_us_state = dict(map(reversed, us_state_to_abbrev.items()))
 
 
 
+# =============================================================================
+# one_hot_cols = ['state'] #'event_type', 'tor_f_scale']
+# one_hot = pd.get_dummies(df[one_hot_cols]) 
+# df = df.drop(one_hot_cols, axis = 1)
+# df = pd.concat([df, one_hot], axis=1)
+# =============================================================================
+
+
+
+
 
 
 
