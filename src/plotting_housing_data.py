@@ -5,11 +5,17 @@ Created on Fri Apr 29 18:50:26 2022
 @author: 16028
 """
 
-
+import pandas as pd
 import plotly.io as pio
 import plotly.express as px
 pio.renderers.default='browser'
 
+########################
+# CITING SHARONE LI
+# CITING SHARONE LI
+# CITING SHARONE LI
+# https://towardsdatascience.com/simplest-way-of-creating-a-choropleth-map-by-u-s-states-in-python-f359ada7735e
+########################
 # https://www.redfin.com/news/data-center/
 # from plotly.offline import plot
 # ...
@@ -40,7 +46,7 @@ fig.show()
 
 
 fig.update_layout(
-      title_text = 'Jan 2022 Median Housing Price by State',
+      title_text = 'April 2022 Median Housing Price by State',
       title_font_family="Times New Roman",
       title_font_size = 22,
       title_font_color="black", 

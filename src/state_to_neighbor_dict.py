@@ -75,9 +75,7 @@ def get_state_border_dict():
         }
     return my_newy
 
-         
-
-
+        
 # =============================================================================
 # # import re
 # re.sub(r'\b \b','no',mystr)
@@ -95,16 +93,3 @@ def get_state_border_dict():
 # 
 # 
 # =============================================================================
-
-# state_to_neighbor_dict = {'arizona':['california', 'nevada', 'utah', 'new mexico'],
-#                           'new mexico': ['arizona', 'texas', 'colorado'],
-#                           'california': ['oregon', 'nevada', 'arizona'],
-#                           'oregon': ['california', 'washington', 'idaho'],
-#                           'washington': ['oregon', 'idaho'],
-#                           'nevada': ['california', 'oregon', 'idaho', 'utah', 'arizona'],
-#                           'idaho': ['utah', 'nevada', 'oregon', 'montana', 'wyoming'],
-#                           'utah': ['arizona', 'california', 'nevada', 'idaho', 'wyoming', 'colorado'],
-#                           'montana': ['wyoming', 'idaho', 'north dakota', 'south dakota'],
-#                           'wyoming': ['colorado', 'utah', 'idaho', 'montana', 'north dakota', 'south dakota', 'nebraska' ]
-#                           }
-

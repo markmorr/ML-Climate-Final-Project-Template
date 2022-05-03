@@ -10,7 +10,6 @@ import glob
 
 
 # =============================================================================
-# # col_names = ['ghcn_id', 'lat', 'lon', 'stdv', 'yr_mo', 'network']
 # base_url = 'https://www1.ncdc.noaa.gov/pub/data/cirs/climdiv/'
 # 
 # new_address_dict = { 
@@ -33,10 +32,6 @@ import glob
 # "zndx": "climdiv-zndxst-v1.0.0-20220406",
 # }
 # 
-# print(new_address_dict['zndx'])
-# 
-# 
-# 
 # col_names = ['id', 'jan', 'feb', 'mar', 'apr', 'may', 'jun', 'july', 'aug', 'sep',
 #              'oct', 'nov', 'dec']
 # 
@@ -55,14 +50,6 @@ import glob
 #     dfy.to_csv(r'C:\Users\16028\Downloads\storm_figuring_out_stuff\local_noaa\raw_' + name + '.csv',
 #                index=False)
 #     
-# # =============================================================================
-# # for name, addresss in new_address_dict.items():
-# #     print(base_url)
-# #     print(address)
-# #     print(base_url + address)
-# #     new_df_dict[name] = pd.read_csv(address, delim_whitespace=True, names= col_names, converters={'id': lambda x: str(x)})
-# #     
-# # =============================================================================
 # =============================================================================
     
 

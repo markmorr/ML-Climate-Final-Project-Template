@@ -22,10 +22,43 @@ def runOneHot(df, feature_name):
     df = df.join(one_hot)
     return df
 
+def correctDamageProp(x):
+    if x == "K":
+        return '1000'
+    elif x == "M":
+        return '1000000'
+    elif x == "B":
+        return '1000000'
+    elif x == ".K":
+        return '1000'
+    elif x == ".M":
+        return '100000'
+    elif x == ".B":
+        return '1000000'
+    elif x == "K.":
+        return '1000'
+    elif x == "M.":
+        return '100000'
+    elif x == "B.":
+        return '1000000'
+    else:
+        return x 
+    
+    
+def mapToSeason(x):
+    if x in [1,2,3]: #['jan', 'feb', 'mar']:
+        return 'winter'
+    elif x in [4,5,6]: #['apr', 'may', 'jun']:
+        return 'spring'
+    elif x in [7,8,9]: #['july', 'aug', 'sep']:
+        return 'summer'
+    elif x in [10,11,12]: #['oct', 'nov', 'dec']:
+        return 'fall'
 
-state_to_region =  {k.lower(): v for k, v in state_to_region.items()}
-df['region'] = df['state'].map(state_to_region)
-abbrev_to_us_state = dict(map(reversed, us_state_to_abbrev.items()))
+
+# state_to_region =  {k.lower(): v for k, v in state_to_region.items()}
+# df['region'] = df['state'].map(state_to_region)
+# abbrev_to_us_state = dict(map(reversed, us_state_to_abbrev.items()))
 
 
 

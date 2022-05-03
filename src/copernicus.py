@@ -187,3 +187,29 @@ gdf["y"] = gdf.centroid.y
 gdf["x"]
 gdf["centroids"] = gdf.centroid
 gdf["centroids"]
+
+
+
+###############################################################################
+interimDataPath = r'C:\Users\16028\Downloads\storm_details'
+df = pd.read_csv(interimDataPath + '\interm_dataframe_2000_on.csv')
+
+df['lat_lon_pair'] = list(zip(df['begin_lat'], df['begin_lon']))
+df.rename(columns={'begin_lat':'lat', 'begin_lon':'lon'}, inplace=True)
+
+def myfunc(x, y, k):
+    return x + y 
+# df['climdiv'] = df.apply(lambda x: myfunc( x['lat'], x['lon'], axis=1))
+
+projection_points = [120.8, -3.4]
+df['climdiv'] = df[['lat', 'lon', ]].apply(lambda x: myfunc(*x, projection_points), axis=1)
+
+df['lat']
+df['lon']
+
+gdf['centroids']
+gdf.columns
+gdf['CD_2DIG']
+gdf['CLIMDIV'].nunique()
+
+

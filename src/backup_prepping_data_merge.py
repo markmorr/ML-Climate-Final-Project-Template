@@ -1,5 +1,12 @@
 # -*- coding: utf-8 -*-
 """
+Created on Mon May  2 21:53:52 2022
+
+@author: 16028
+"""
+
+# -*- coding: utf-8 -*-
+"""
 Created on Mon May  2 01:14:48 2022
 
 @author: 16028
@@ -48,7 +55,6 @@ from state_to_neighbor_dict import get_state_border_dict
 
 # https://www.c2es.org/content/tornadoes-and-climate-change/ use this in powerpoint?
 
-
 # =============================================================================
 directoryPath = r'C:\Users\16028\Downloads\storm_details\details'
 
@@ -63,18 +69,11 @@ for filename in res:
     x = pd.read_csv(filename)
     df_dict[i] = x
     glued_data = pd.concat([glued_data,x],axis=0)
-tempo = glued_data.sample(100000) 
 
-
-
-df1 = glued_data[:1000000]
-
-# df = first_tenth.copy()
 df = glued_data.copy()
-
-
 percent_missing = df.isnull().sum() * 100 / len(df)
 print(percent_missing)  
+
 
 df.columns = df.columns.str.lower()
 cols_to_use = ['begin_yearmonth', 'begin_day', 'episode_id', 'event_id', 'state', 'event_type', 
@@ -87,142 +86,23 @@ df.drop(columns=cols_to_drop, inplace=True)
 
 df['damage_property'] = df['damage_property'].replace(r'^\s+$', np.nan, regex=True)
 df['damage_property'].fillna('0', inplace=True)  
-  
-yg = df['damage_property'].value_counts()
-print(yg)
-
-
 df['damage_property'] = df['damage_property'].apply(correctDamageProp)
-
-
 df.damage_property = (df.damage_property.replace(r'[KMB]+$', '', regex=True).astype(float) * \
 df.damage_property.str.extract(r'[\d\.]+([KMB]+)', expand=False)
 .fillna(1).replace(['K','M', 'B'], [10**3, 10**6,10**9 ]).astype(int))
 df['damage_cost'] = df['damage_property']
 
-# df['damage_cost'].to_csv(interimDataPath + '\saving_damage_corrected.csv', index=False)
-# df.to_csv(interimDataPath + '\interm_dataframe_2000_on.csv', index=False)
+df['damage_cost'].to_csv(interimDataPath + '\saving_damage_corrected.csv', index=False)
+df.to_csv(interimDataPath + '\interm_dataframe_2000_on.csv', index=False)
+
+# df['season'] = df['month'].apply(mapToSeason)
 
 # =============================================================================
 
-
-def getResults(y_true, y_pred):
-    print('MAE is: ' + str(mean_absolute_error(y_true,y_pred)))
-
-
-interimDataPath = r'C:\Users\16028\Downloads\storm_details'
-df = pd.read_csv(interimDataPath + '\interm_dataframe_2000_on.csv')
-
-damge_cost_vc = df.damage_cost.value_counts()
-
-df['log_cost'] = np.log(df['damage_cost']+1)
-
-df.log_cost.value_counts()
-plt.hist(df['log_cost'])
-counts, bins = np.histogram(df.log_cost)
-plt.hist(bins[:-1], bins, weights=counts, color='blue')
-plt.grid()
-plt.show()
+# interimDataPath = r'C:\Users\16028\Downloads\storm_details'
+# df = pd.read_csv(interimDataPath + '\interm_dataframe_2000_on.csv')
 
 
-df.columns
-
-BASE_YEAR = 1999
-df['year'] = df['begin_yearmonth'].astype(str).str[:4].astype(int)
-df['month'] = df['begin_yearmonth'].astype(str).str[4:].astype(int)
-df['years_since'] = df['year'] - BASE_YEAR
-
-df['days_since'] = df['years_since']*365 + df['month']*12 + df['begin_day']
-df.days_since
-
-df.columns
-
-temp = df[:1000]
-
-df.event_type.value_counts()
-storm_types = list(df.event_type.value_counts().keys())
-
-
-storm_exclusion_list = ['Drought', 'Heat', 'Excessive Heat', 'High Surf', 'Wildfire',
-                        'Coastal Flood', 'Avalanche', 'Dust Devil', 'Cold/Wind Chill',
-                        'Rip Current']
-
-
-df2 = df.copy()
-
-df = df[~df['event_type'].isin(storm_exclusion_list)]
-
-df['num_storms'] = 1
-df.columns
-
-state_vc = df.state.value_counts()
-
-state_exclusion_list = ['ALASKA', 'ATLANTIC NORTH', 'GULF OF MEXICO', 'HAWAII', 'ATLANTIC SOUTH', 'PUERTO RICO', 
- 'LAKE MICHIGAN', 'LAKE ERIE', 'LAKE HURON', 'LAKE SUPERIOR',]
-
-def correctDC(x):
-    if x == 'DISTRICT OF COLUMBIA':
-        return 'VIRGINIA'
-    else:
-        return x
-df['state'] = df['state'].apply(correctDC)
-df = df[~df['state'].isin(state_exclusion_list)]
-df = df.groupby("state").filter(lambda x: len(x) > 511)
-
-
-df['lat_lon_pair'] = list(zip(df['begin_lat'], df['begin_lon']))
-df[lat_lon_pair]
-
-
-df.rename(columns={'begin_lat':'lat', 'begin_lon':'lon'}, inplace=True)
-
-
-
-
-def myfunc(x, y, k):
-    return x + y 
-# df['climdiv'] = df.apply(lambda x: myfunc( x['lat'], x['lon'], axis=1))
-
-projection_points = [120.8, -3.4]
-df['climdiv'] = df[['lat', 'lon', ]].apply(lambda x: myfunc(*x, projection_points), axis=1)
-
-df['lat']
-df['lon']
-df['climdiv']
-df.columns
-df['lat']
-
-
-gdf['centroids']
-gdf.columns
-gdf
-gdf['CD_2DIG']
-gdf['CLIMDIV'].nunique()
-
-
-
-
-
-
-def mapToSeason(x):
-    if x in [1,2,3]: #['jan', 'feb', 'mar']:
-        return 'winter'
-    elif x in [4,5,6]: #['apr', 'may', 'jun']:
-        return 'spring'
-    elif x in [7,8,9]: #['july', 'aug', 'sep']:
-        return 'summer'
-    elif x in [10,11,12]: #['oct', 'nov', 'dec']:
-        return 'fall'
-# df['season'] = df['month'].apply(mapToSeason)
-
-df_tempo = df[:10000]
-df.columns
-
-sum_df = df.groupby(['year', 'state']).agg({'log_cost': 'sum', 'num_storms': 'sum'}) ### was month
-sum_df3
-
-
-df.years_since
 
 
 
