@@ -6,7 +6,7 @@
 # # do it by zip code?
 
 # # need to build a basic version of this, and yes it may result in some datapoints looking
-# # like symmetric versions of each other
+# # like close to symmetric versions of each other (but not quite, different nieighbor sets)
 # # then move on to climate forward data
 # # binning response storm amounts
 # # then go lower level to zip code
