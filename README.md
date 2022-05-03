@@ -5,49 +5,51 @@
 Some notes on organization to make navigating this repsitory a little easier:
 (All the notes below refer to source)
 
+PRIMARY FILES SECTION
 
-The file main_prediction_yearly_agg contains essentially the full pipeline, excepting the climate data projection data.
+The file `main_prediction_yearly_agg` contains essentially the full pipeline, excepting the climate data projection data.
 It is a bit unwieldy; I have tried to comment it well. It draws on historical storm data from the NWS Storm Events Database
 and the GHCN (Global Historical Climatology Network) file for weather-related features, and culminates in training a model and making predictions.
-The file main_prediction_monthly_agg contains similar code (so please note--much of it may be repetitive), but somewhat older, so it is less clean, and the predictions are done by month rather than by year. I recommend reading main_prediction_yearly but it may still be of interest.
+The file `main_prediction_yearly_agg` contains similar code,(so please note--much of it may be repetitive), but instead of aggregating by year, it is altered so that it predicts per month. It is somewhat older, so it is less clean. I recommend reading main_prediction_yearly but it may still be of interest.
 
-The file storm_prediction_initial_clustering contains some of my first work on the project, trying to detect patterns from clustering the data and generating a good plot. The paths may not even work at this point without some slight changes. I keep it here for the plots it can generate and as a demonstration of how much the project has changed.
+The file `storm_prediction_initial_clustering` contains some of my first work on the project, trying to detect patterns from clustering the data and generating a good plot. The paths may not even work at this point without some slight changes. I keep it here for the plots it can generate and as a demonstration of how much the project has changed.
 The file useful_code contains, as the name suggests, a small list of utility functions that I found
 to be useful at various stages of testing and experimenting.
 
 
+READ AND PREPROCESS SECTION
 
-The file saving_files_locally was just used for downloading the GHCN data from the web locally onto my computer. The code used for this is now commented out; The uncommented portion is the function I call to get the each feature via a dictionary with the feature name as the key and its associated dataframe as the value.
+The file `saving_files_locally` was just used for downloading the GHCN data from the web locally onto my computer. The code used for this is now commented out; The uncommented portion is the function I call to get the each feature via a dictionary with the feature name as the key and its associated dataframe as the value.
 
-Dictionary files//
-state_to_neighbor_dict is a dictionary mapping each state to its bordering states in list form.
+`load_and_process_storm_data` loads in the NWS historical storm events data from a list of files and combines them. It also does some basic pre-processing work to remove extraneous columns and convert the damage estimate to a proper float type. It saves an interim data file to csv which is later used in main_prediction.
 
-Fips_code_diciontary contains two dictionaries; one mapping each state to its fips code, and the other mapping the fips code to the state.
-
-The file us_state_to_abbrev (not written by me) contains a simply utility function to get a dictionary of us state names 
-to their two-letter abbreviation; again, I did not write this code myself. Citation in the file and in my report.
-
-temp_state_dict_working contains a number of dictionaries for mapping the id in the GHCN/NWS data. Some of these are unique to the GHCN data, (i.e. they are not even standard FIPS codes--just taken from the GHCN website.)
-
-Read-in files ///
-
-Load_and_process_storm_data loads in the NWS historical storm events data from a list of files and combines them. It also does some basic pre-processing work to remove extraneous columns and convert the damage estimate to a proper float type. It saves an interim data file to csv which is later used in main_prediction.
-
-The file county_version_saving_files_locally contains a lot of repetitive code from the file saving_files_locally;
+The file `county_version_saving_files_locally` contains a lot of repetitive code from the file saving_files_locally;
 I didn't have time to develop a clean file locally, and differences in how I need to process the ID made it
 worth creating a differently file for. If you understand saving_files_locally, you understand this file.
 
-The file 'copernicus' contains code for calling the Climate Data Store API to download files of a given 
+The file `copernicus` contains code for calling the Climate Data Store API to download files of a given 
 type. It also contains code for processing this data and beginning to map it onto a US map.
 
-- The folder 'unfinished_work' denotes code that I began but didn't havet time to finish, 
-such as the GNN and the experiment logging. I hope to finish it some day and keep it as some of the most interesting ideas that I touched upon along the way during the process of iterating through things. Plotting housing data---it is mentioned in citations and in the file, much of the code was from an online article (not written by me). I have altered it but not enough to claim it as my code.
+- The folder `unfinished_work` denotes code that I began but didn't havet time to finish, 
+such as the GNN and the experiment logging. I hope to finish it some day and keep it as some of the most interesting ideas that I touched upon along the way during the process of iterating through things. Note on plotting housing data---it is mentioned in citations and in the file, much of the code was from an online article (not written by me). I have altered it but not enough to claim it as my code.
+
+
+DICTIONARY SECTION
+
+`state_to_neighbor_dict` is a dictionary mapping each state to its bordering states in list form.
+
+`fips_code_dictionary` contains two dictionaries; one mapping each state to its fips code, and the other mapping the fips code to the state.
+
+The file `us_state_to_abbrev` (not written by me) contains a simply utility function to get a dictionary of us state names 
+to their two-letter abbreviation; again, I did not write this code myself. Citation in the file and in my report.
+
+`temp_state_dict_working` contains a number of dictionaries for mapping the id in the GHCN/NWS data. Some of these are unique to the GHCN data, (i.e. they are not even standard FIPS codes--just taken from the GHCN website.)
+
 
 A number of files have been removed and file names have been changed in the final commit to make this repository
 more easily navigable and understood. Prior commits will contain more "scratch work" if it is of interest
 to the reader.
 
-but still find interesting for myself and helps show some of the process along the way.
 
 
 
